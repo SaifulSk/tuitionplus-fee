@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fees Receipt Generator</title>
+
+<style>
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f4f6f9;
+  margin: 0;
+  padding: 15px;
+}
+
+/* PRINT FIX */
+@media print {
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .form, .btn {
+    display: none;
+  }
+}
+
+/* FORM */
+.form {
+  max-width: 800px;
+  margin: auto;
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+/* INPUTS */
+.form input, .form select {
+  padding: 10px;
+  margin: 8px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* BUTTON GROUP */
+.button-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* BUTTON */
+.btn {
+  padding: 10px 15px;
+  background: #C1121F;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+/* RECEIPT */
+.receipt {
+  max-width: 700px;
+  margin: auto;
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+/* LOGO */
+.logo {
+  width: 150px;
+  display: block;
+  margin: auto;
+}
+
+/* TITLE */
+.title {
+  text-align: center;
+  font-size: 28px;
+  color: #1E3A5F;
+  font-weight: bold;
+}
+
+.subtitle {
+  text-align: center;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+/* TABLE */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.label {
+  background: #f1f1f1;
+  font-weight: bold;
+  width: 40%;
+}
+
+/* ADDRESS */
+.address-box {
+  margin-top: 15px;
+  padding: 12px;
+  background: #f1f4f8;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* FOOTER */
+.footer {
+  margin-top: 20px;
+  background: #1E3A5F;
+  color: white;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.footer img {
+  width: 35px;
+}
+
+.phone {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+/* MOBILE FIX */
+@media(max-width:600px){
+  .phone {
+    margin-top: 15px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- FORM -->
+<div class="form">
+  <h3>Enter Details</h3>
+
+  <input type="text" id="name" placeholder="Student Name">
+
+  <select id="class">
+    <option value="">Select Class</option>
+    <option>8</option>
+    <option>9</option>
+    <option>10</option>
+    <option>11</option>
+    <option>12</option>
+  </select>
+
+  <input type="date" id="date">
+
+  <input type="month" id="month">
+
+  <select id="mode">
+    <option value="">Payment Mode</option>
+    <option>Cash</option>
+    <option>PhonePe</option>
+    <option>Google Pay</option>
+    <option>Paytm</option>
+    <option>Online</option>
+  </select>
+
+  <div class="button-group">
+    <button class="btn" onclick="generate()">Generate</button>
+    <button class="btn" id="printBtn" onclick="window.print()" style="display:none;">
+      Print / Save PDF
+    </button>
+  </div>
+</div>
+
+<!-- RECEIPT -->
+<div class="receipt" id="receipt">
+
+  <img src="logo.png" class="logo">
+
+  <div class="title">FEES PAID</div>
+  <div class="subtitle">Fees Payment Received</div>
+
+  <table class="table">
+    <tr>
+      <td class="label">Student Name</td>
+      <td id="r_name">---</td>
+    </tr>
+    <tr>
+      <td class="label">Class</td>
+      <td id="r_class">---</td>
+    </tr>
+    <tr>
+      <td class="label">Date Paid On</td>
+      <td id="r_date">---</td>
+    </tr>
+    <tr>
+      <td class="label">Month Paid For</td>
+      <td id="r_month">---</td>
+    </tr>
+    <tr>
+      <td class="label">Mode Of Payment</td>
+      <td id="r_mode">---</td>
+    </tr>
+  </table>
+
+  <div class="address-box">
+    Pirtala Bulu Market below Pirtala Nursing Home | Few metres away from KECS
+  </div>
+
+  <div class="footer">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <img src="logo.png">
+      <div>
+        <strong>TUITION PLUS</strong><br>
+        <small>Empowering Young Minds</small>
+      </div>
+    </div>
+
+    <div class="phone">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">
+        <path d="M6.6,10.8c1.5,2.9,3.7,5.1,6.6,6.6l2.2-2.2c0.3-0.3,0.7-0.4,1.1-0.3c1.2,0.4,2.5,0.6,3.8,0.6
+        c0.6,0,1,0.4,1,1V21c0,0.6-0.4,1-1,1C10.3,22,2,13.7,2,3c0-0.6,0.4-1,1-1h4.5c0.6,0,1,0.4,1,1
+        c0,1.3,0.2,2.6,0.6,3.8c0.1,0.4,0,0.8-0.3,1.1L6.6,10.8z"/>
+      </svg>
+      <span>8013753344</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Disable future date
+const today = new Date().toISOString().split("T")[0];
+document.getElementById("date").setAttribute("max", today);
+
+// Format date
+function formatDate(dateStr) {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  });
+}
+
+// Format month
+function formatMonth(monthStr) {
+  const [year, month] = monthStr.split("-");
+  const date = new Date(year, month - 1);
+  return date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+}
+
+function generate() {
+  document.getElementById("r_name").innerText = document.getElementById("name").value;
+  document.getElementById("r_class").innerText = document.getElementById("class").value;
+
+  const dateVal = document.getElementById("date").value;
+  document.getElementById("r_date").innerText = dateVal ? formatDate(dateVal) : "---";
+
+  const monthVal = document.getElementById("month").value;
+  document.getElementById("r_month").innerText = monthVal ? formatMonth(monthVal) : "---";
+
+  document.getElementById("r_mode").innerText = document.getElementById("mode").value;
+
+  document.getElementById("printBtn").style.display = "inline-block";
+}
+</script>
+
+</body>
+</html>
