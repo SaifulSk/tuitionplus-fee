@@ -13,6 +13,7 @@ body {
   padding: 15px;
 }
 
+/* PRINT FIX */
 @media print {
   body {
     -webkit-print-color-adjust: exact;
@@ -23,6 +24,7 @@ body {
   }
 }
 
+/* FORM */
 .form {
   max-width: 800px;
   margin: auto;
@@ -32,29 +34,22 @@ body {
   margin-bottom: 20px;
 }
 
+/* INPUTS */
 .form input, .form select {
-  padding: 12px;
+  padding: 10px;
   margin: 8px 0;
   width: 100%;
   box-sizing: border-box;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  -webkit-appearance: none;
-  appearance: none;
-  font-size: 16px;
 }
 
-/* MULTI SELECT HEIGHT */
-#months {
-  height: 120px;
-}
-
+/* BUTTON GROUP */
 .button-group {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
 }
 
+/* BUTTON */
 .btn {
   padding: 10px 15px;
   background: #C1121F;
@@ -65,6 +60,7 @@ body {
   margin-top: 10px;
 }
 
+/* RECEIPT */
 .receipt {
   max-width: 700px;
   margin: auto;
@@ -74,12 +70,14 @@ body {
   box-shadow: 0 5px 20px rgba(0,0,0,0.1);
 }
 
+/* LOGO */
 .logo {
   width: 150px;
   display: block;
   margin: auto;
 }
 
+/* TITLE */
 .title {
   text-align: center;
   font-size: 28px;
@@ -93,6 +91,7 @@ body {
   margin-bottom: 20px;
 }
 
+/* TABLE */
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -110,6 +109,7 @@ body {
   width: 40%;
 }
 
+/* ADDRESS */
 .address-box {
   margin-top: 15px;
   padding: 12px;
@@ -119,6 +119,7 @@ body {
   font-size: 14px;
 }
 
+/* FOOTER */
 .footer {
   margin-top: 20px;
   background: #1E3A5F;
@@ -141,6 +142,7 @@ body {
   font-size: 14px;
 }
 
+/* MOBILE FIX */
 @media(max-width:600px){
   .phone {
     margin-top: 15px;
@@ -151,6 +153,7 @@ body {
 
 <body>
 
+<!-- FORM -->
 <div class="form">
   <h3>Enter Details</h3>
 
@@ -158,9 +161,6 @@ body {
 
   <select id="class">
     <option value="">Select Class</option>
-    <option>5</option>
-    <option>6</option>
-    <option>7</option>
     <option>8</option>
     <option>9</option>
     <option>10</option>
@@ -170,21 +170,7 @@ body {
 
   <input type="date" id="date">
 
-  <!-- ✅ MULTI MONTH SELECT -->
-  <select id="months" multiple>
-    <option value="2026-01">January 2026</option>
-    <option value="2026-02">February 2026</option>
-    <option value="2026-03">March 2026</option>
-    <option value="2026-04">April 2026</option>
-    <option value="2026-05">May 2026</option>
-    <option value="2026-06">June 2026</option>
-    <option value="2026-07">July 2026</option>
-    <option value="2026-08">August 2026</option>
-    <option value="2026-09">September 2026</option>
-    <option value="2026-10">October 2026</option>
-    <option value="2026-11">November 2026</option>
-    <option value="2026-12">December 2026</option>
-  </select>
+  <input type="month" id="month">
 
   <select id="mode">
     <option value="">Payment Mode</option>
@@ -203,7 +189,8 @@ body {
   </div>
 </div>
 
-<div class="receipt">
+<!-- RECEIPT -->
+<div class="receipt" id="receipt">
 
   <img src="logo.png" class="logo">
 
@@ -224,8 +211,8 @@ body {
       <td id="r_date">---</td>
     </tr>
     <tr>
-      <td class="label">Months Paid For</td>
-      <td id="r_months">---</td>
+      <td class="label">Month Paid For</td>
+      <td id="r_month">---</td>
     </tr>
     <tr>
       <td class="label">Mode Of Payment</td>
@@ -247,7 +234,12 @@ body {
     </div>
 
     <div class="phone">
-      📞 8013753344
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">
+        <path d="M6.6,10.8c1.5,2.9,3.7,5.1,6.6,6.6l2.2-2.2c0.3-0.3,0.7-0.4,1.1-0.3c1.2,0.4,2.5,0.6,3.8,0.6
+        c0.6,0,1,0.4,1,1V21c0,0.6-0.4,1-1,1C10.3,22,2,13.7,2,3c0-0.6,0.4-1,1-1h4.5c0.6,0,1,0.4,1,1
+        c0,1.3,0.2,2.6,0.6,3.8c0.1,0.4,0,0.8-0.3,1.1L6.6,10.8z"/>
+      </svg>
+      <span>8013753344</span>
     </div>
   </div>
 
@@ -268,10 +260,11 @@ function formatDate(dateStr) {
   });
 }
 
-// Format months
-function getSelectedMonths() {
-  const selected = Array.from(document.getElementById("months").selectedOptions);
-  return selected.map(opt => opt.text).join(", ");
+// Format month
+function formatMonth(monthStr) {
+  const [year, month] = monthStr.split("-");
+  const date = new Date(year, month - 1);
+  return date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
 }
 
 function generate() {
@@ -281,7 +274,8 @@ function generate() {
   const dateVal = document.getElementById("date").value;
   document.getElementById("r_date").innerText = dateVal ? formatDate(dateVal) : "---";
 
-  document.getElementById("r_months").innerText = getSelectedMonths();
+  const monthVal = document.getElementById("month").value;
+  document.getElementById("r_month").innerText = monthVal ? formatMonth(monthVal) : "---";
 
   document.getElementById("r_mode").innerText = document.getElementById("mode").value;
 
