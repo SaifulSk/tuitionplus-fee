@@ -157,7 +157,9 @@ body {
 <div class="form">
   <h3>Enter Details</h3>
 
-  <input type="text" id="name" placeholder="Student Name">
+  <!-- STUDENT NAME WITH DROPDOWN -->
+  <input type="text" id="name" placeholder="Student Name" list="studentSuggestions">
+  <datalist id="studentSuggestions"></datalist>
 
   <select id="class">
     <option value="">Select Class</option>
@@ -186,6 +188,7 @@ body {
 
   <div class="button-group">
     <button class="btn" onclick="generate()">Generate</button>
+
     <button class="btn" id="printBtn" onclick="window.print()" style="display:none;">
       Print / Save PDF
     </button>
@@ -249,13 +252,82 @@ body {
 </div>
 
 <script>
-// Disable future date
-const today = new Date().toISOString().split("T")[0];
-document.getElementById("date").setAttribute("max", today);
+// ==========================
+// AUTO DATE + MONTH
+// ==========================
 
-// Format date
+// Today's date
+const today = new Date();
+const todayFormatted = today.toISOString().split("T")[0];
+
+document.getElementById("date").value = todayFormatted;
+
+// Previous month
+const prevMonthDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+
+const prevMonth =
+  prevMonthDate.getFullYear() +
+  "-" +
+  String(prevMonthDate.getMonth() + 1).padStart(2, "0");
+
+document.getElementById("month").value = prevMonth;
+
+// Disable future date
+document.getElementById("date").setAttribute("max", todayFormatted);
+
+// ==========================
+// LOCAL STORAGE STUDENT LIST
+// ==========================
+
+const STORAGE_KEY = "recentStudents";
+
+// Load saved students into dropdown
+function loadStudentSuggestions() {
+  const students = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+  const datalist = document.getElementById("studentSuggestions");
+
+  datalist.innerHTML = "";
+
+  students.forEach(student => {
+    const option = document.createElement("option");
+    option.value = student;
+    datalist.appendChild(option);
+  });
+}
+
+// Save student name
+function saveStudentName(name) {
+  if (!name.trim()) return;
+
+  let students = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+  // Remove duplicate if exists
+  students = students.filter(
+    student => student.toLowerCase() !== name.toLowerCase()
+  );
+
+  // Add latest on top
+  students.unshift(name);
+
+  // Keep only latest 20 names
+  students = students.slice(0, 20);
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(students));
+
+  loadStudentSuggestions();
+}
+
+// Initial load
+loadStudentSuggestions();
+
+// ==========================
+// FORMAT DATE
+// ==========================
+
 function formatDate(dateStr) {
   const date = new Date(dateStr);
+
   return date.toLocaleDateString('en-GB', {
     day: 'numeric',
     month: 'long',
@@ -263,24 +335,49 @@ function formatDate(dateStr) {
   });
 }
 
-// Format month
+// ==========================
+// FORMAT MONTH
+// ==========================
+
 function formatMonth(monthStr) {
   const [year, month] = monthStr.split("-");
+
   const date = new Date(year, month - 1);
-  return date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+
+  return date.toLocaleString('en-US', {
+    month: 'long',
+    year: 'numeric'
+  });
 }
 
+// ==========================
+// GENERATE RECEIPT
+// ==========================
+
 function generate() {
-  document.getElementById("r_name").innerText = document.getElementById("name").value;
-  document.getElementById("r_class").innerText = document.getElementById("class").value;
+
+  const studentName = document.getElementById("name").value;
+
+  // Save to local storage
+  saveStudentName(studentName);
+
+  document.getElementById("r_name").innerText = studentName;
+
+  document.getElementById("r_class").innerText =
+    document.getElementById("class").value;
 
   const dateVal = document.getElementById("date").value;
-  document.getElementById("r_date").innerText = dateVal ? formatDate(dateVal) : "---";
+
+  document.getElementById("r_date").innerText =
+    dateVal ? formatDate(dateVal) : "---";
 
   const monthVal = document.getElementById("month").value;
-  document.getElementById("r_month").innerText = monthVal ? formatMonth(monthVal) : "---";
 
-  document.getElementById("r_mode").innerText = document.getElementById("mode").value;
+  document.getElementById("r_month").innerText =
+    monthVal ? formatMonth(monthVal) : "---";
+
+  document.getElementById("r_mode").innerText =
+    document.getElementById("mode").value;
 
   document.getElementById("printBtn").style.display = "inline-block";
 }
