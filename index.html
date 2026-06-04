@@ -34,7 +34,6 @@ body {
   margin-bottom: 20px;
 }
 
-/* INPUTS */
 .form input, .form select {
   padding: 10px;
   margin: 8px 0;
@@ -42,14 +41,12 @@ body {
   box-sizing: border-box;
 }
 
-/* BUTTON GROUP */
 .button-group {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
 }
 
-/* BUTTON */
 .btn {
   padding: 10px 15px;
   background: #C1121F;
@@ -70,14 +67,12 @@ body {
   box-shadow: 0 5px 20px rgba(0,0,0,0.1);
 }
 
-/* LOGO */
 .logo {
   width: 150px;
   display: block;
   margin: auto;
 }
 
-/* TITLE */
 .title {
   text-align: center;
   font-size: 28px;
@@ -91,7 +86,6 @@ body {
   margin-bottom: 20px;
 }
 
-/* TABLE */
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -109,7 +103,6 @@ body {
   width: 40%;
 }
 
-/* ADDRESS */
 .address-box {
   margin-top: 15px;
   padding: 12px;
@@ -119,7 +112,6 @@ body {
   font-size: 14px;
 }
 
-/* FOOTER */
 .footer {
   margin-top: 20px;
   background: #1E3A5F;
@@ -142,40 +134,33 @@ body {
   font-size: 14px;
 }
 
-/* MOBILE FIX */
 @media(max-width:600px){
-  .phone {
-    margin-top: 15px;
-  }
+  .phone { margin-top: 15px; }
 }
 </style>
 </head>
 
 <body>
 
-<!-- FORM -->
 <div class="form">
   <h3>Enter Details</h3>
 
-  <!-- STUDENT NAME WITH DROPDOWN -->
+  <!-- Student name with history -->
   <input type="text" id="name" placeholder="Student Name" list="studentSuggestions">
   <datalist id="studentSuggestions"></datalist>
 
   <select id="class">
     <option value="">Select Class</option>
-    <option>5</option>
-    <option>6</option>
-    <option>7</option>
-    <option>8</option>
-    <option>9</option>
-    <option>10</option>
-    <option>11</option>
-    <option>12</option>
+    <option>5</option><option>6</option><option>7</option>
+    <option>8</option><option>9</option><option>10</option>
+    <option>11</option><option>12</option>
   </select>
 
   <input type="date" id="date">
 
-  <input type="month" id="month">
+  <!-- MULTI MONTH -->
+  <label><b>Select Months Paid For</b></label>
+  <select id="months" multiple style="height:140px;"></select>
 
   <select id="mode">
     <option value="">Payment Mode</option>
@@ -188,7 +173,6 @@ body {
 
   <div class="button-group">
     <button class="btn" onclick="generate()">Generate</button>
-
     <button class="btn" id="printBtn" onclick="window.print()" style="display:none;">
       Print / Save PDF
     </button>
@@ -196,7 +180,7 @@ body {
 </div>
 
 <!-- RECEIPT -->
-<div class="receipt" id="receipt">
+<div class="receipt">
 
   <img src="logo.png" class="logo">
 
@@ -204,26 +188,11 @@ body {
   <div class="subtitle">Fees Payment Received</div>
 
   <table class="table">
-    <tr>
-      <td class="label">Student Name</td>
-      <td id="r_name">---</td>
-    </tr>
-    <tr>
-      <td class="label">Class</td>
-      <td id="r_class">---</td>
-    </tr>
-    <tr>
-      <td class="label">Date Paid On</td>
-      <td id="r_date">---</td>
-    </tr>
-    <tr>
-      <td class="label">Month Paid For</td>
-      <td id="r_month">---</td>
-    </tr>
-    <tr>
-      <td class="label">Mode Of Payment</td>
-      <td id="r_mode">---</td>
-    </tr>
+    <tr><td class="label">Student Name</td><td id="r_name">---</td></tr>
+    <tr><td class="label">Class</td><td id="r_class">---</td></tr>
+    <tr><td class="label">Date Paid On</td><td id="r_date">---</td></tr>
+    <tr><td class="label">Month Paid For</td><td id="r_month">---</td></tr>
+    <tr><td class="label">Mode Of Payment</td><td id="r_mode">---</td></tr>
   </table>
 
   <div class="address-box">
@@ -240,11 +209,6 @@ body {
     </div>
 
     <div class="phone">
-      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">
-        <path d="M6.6,10.8c1.5,2.9,3.7,5.1,6.6,6.6l2.2-2.2c0.3-0.3,0.7-0.4,1.1-0.3c1.2,0.4,2.5,0.6,3.8,0.6
-        c0.6,0,1,0.4,1,1V21c0,0.6-0.4,1-1,1C10.3,22,2,13.7,2,3c0-0.6,0.4-1,1-1h4.5c0.6,0,1,0.4,1,1
-        c0,1.3,0.2,2.6,0.6,3.8c0.1,0.4,0,0.8-0.3,1.1L6.6,10.8z"/>
-      </svg>
       <span>8013753344</span>
     </div>
   </div>
@@ -253,131 +217,115 @@ body {
 
 <script>
 // ==========================
-// AUTO DATE + MONTH
+// AUTO DATE
 // ==========================
-
-// Today's date
 const today = new Date();
-const todayFormatted = today.toISOString().split("T")[0];
-
-document.getElementById("date").value = todayFormatted;
-
-// Previous month
-const prevMonthDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-
-const prevMonth =
-  prevMonthDate.getFullYear() +
-  "-" +
-  String(prevMonthDate.getMonth() + 1).padStart(2, "0");
-
-document.getElementById("month").value = prevMonth;
-
-// Disable future date
-document.getElementById("date").setAttribute("max", todayFormatted);
+document.getElementById("date").value = today.toISOString().split("T")[0];
 
 // ==========================
-// LOCAL STORAGE STUDENT LIST
+// STUDENT HISTORY STORAGE
 // ==========================
+const STORAGE_KEY = "students";
 
-const STORAGE_KEY = "recentStudents";
-
-// Load saved students into dropdown
-function loadStudentSuggestions() {
-  const students = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-
-  const datalist = document.getElementById("studentSuggestions");
-
-  datalist.innerHTML = "";
-
-  students.forEach(student => {
-    const option = document.createElement("option");
-    option.value = student;
-    datalist.appendChild(option);
+function loadStudents() {
+  const list = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  const dl = document.getElementById("studentSuggestions");
+  dl.innerHTML = "";
+  list.forEach(name => {
+    const opt = document.createElement("option");
+    opt.value = name;
+    dl.appendChild(opt);
   });
 }
 
-// Save student name
-function saveStudentName(name) {
+function saveStudent(name) {
   if (!name.trim()) return;
 
-  let students = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  let list = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  list = list.filter(n => n.toLowerCase() !== name.toLowerCase());
+  list.unshift(name);
+  list = list.slice(0, 20);
 
-  // Remove duplicate if exists
-  students = students.filter(
-    student => student.toLowerCase() !== name.toLowerCase()
-  );
-
-  // Add latest on top
-  students.unshift(name);
-
-  // Keep only latest 20 names
-  students = students.slice(0, 20);
-
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(students));
-
-  loadStudentSuggestions();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  loadStudents();
 }
 
-// Initial load
-loadStudentSuggestions();
+loadStudents();
 
 // ==========================
-// FORMAT DATE
+// MONTHS GENERATION
 // ==========================
+function generateMonths() {
+  const select = document.getElementById("months");
+  const now = new Date();
 
-function formatDate(dateStr) {
-  const date = new Date(dateStr);
+  for (let i = -3; i <= 12; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
 
-  return date.toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric'
+    const val =
+      d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+
+    const label = d.toLocaleString("en-US", {
+      month: "long",
+      year: "numeric"
+    });
+
+    const opt = document.createElement("option");
+    opt.value = val;
+    opt.textContent = label;
+
+    select.appendChild(opt);
+  }
+
+  // auto select previous month
+  const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const prevVal =
+    prev.getFullYear() + "-" + String(prev.getMonth() + 1).padStart(2, "0");
+
+  [...select.options].forEach(o => {
+    if (o.value === prevVal) o.selected = true;
   });
 }
 
+generateMonths();
+
 // ==========================
-// FORMAT MONTH
+// FORMATTERS
 // ==========================
-
-function formatMonth(monthStr) {
-  const [year, month] = monthStr.split("-");
-
-  const date = new Date(year, month - 1);
-
-  return date.toLocaleString('en-US', {
-    month: 'long',
-    year: 'numeric'
+function formatDate(d) {
+  return new Date(d).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric"
   });
+}
+
+function formatMonths(vals) {
+  return vals.map(v => {
+    const [y, m] = v.split("-");
+    return new Date(y, m - 1).toLocaleString("en-US", {
+      month: "long",
+      year: "numeric"
+    });
+  }).join(", ");
 }
 
 // ==========================
 // GENERATE RECEIPT
 // ==========================
-
 function generate() {
+  const name = document.getElementById("name").value;
 
-  const studentName = document.getElementById("name").value;
+  saveStudent(name);
 
-  // Save to local storage
-  saveStudentName(studentName);
+  document.getElementById("r_name").innerText = name;
+  document.getElementById("r_class").innerText = document.getElementById("class").value;
+  document.getElementById("r_date").innerText = formatDate(document.getElementById("date").value);
 
-  document.getElementById("r_name").innerText = studentName;
+  const months = [...document.getElementById("months").selectedOptions].map(o => o.value);
+  document.getElementById("r_month").innerText = months.length ? formatMonths(months) : "---";
 
-  document.getElementById("r_class").innerText =
-    document.getElementById("class").value;
-
-  const dateVal = document.getElementById("date").value;
-
-  document.getElementById("r_date").innerText =
-    dateVal ? formatDate(dateVal) : "---";
-
-  const monthVal = document.getElementById("month").value;
-
-  document.getElementById("r_month").innerText =
-    monthVal ? formatMonth(monthVal) : "---";
-
-  document.getElementById("r_mode").innerText =
-    document.getElementById("mode").value;
+  document.getElementById("r_mode").innerText = document.getElementById("mode").value;
 
   document.getElementById("printBtn").style.display = "inline-block";
 }
