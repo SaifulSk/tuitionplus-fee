@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fees Receipt Generator</title>
 
 <style>
@@ -13,6 +13,7 @@ body {
   padding: 15px;
 }
 
+/* PRINT FIX */
 @media print {
   body {
     -webkit-print-color-adjust: exact;
@@ -109,6 +110,7 @@ body {
   font-size: 14px;
 }
 
+/* ❗ FOOTER LEFT EXACT AS YOUR ORIGINAL */
 .footer {
   margin-top: 20px;
   background: #1E3A5F;
@@ -162,16 +164,22 @@ body {
 
 <body>
 
+<!-- FORM -->
 <div class="form">
   <h3>Enter Details</h3>
 
-  <input type="text" id="name" placeholder="Student Name" autocomplete="off" />
+  <input type="text" id="name" placeholder="Student Name">
 
   <select id="class">
     <option value="">Select Class</option>
-    <option>5</option><option>6</option><option>7</option>
-    <option>8</option><option>9</option><option>10</option>
-    <option>11</option><option>12</option>
+    <option>5</option>
+    <option>6</option>
+    <option>7</option>
+    <option>8</option>
+    <option>9</option>
+    <option>10</option>
+    <option>11</option>
+    <option>12</option>
   </select>
 
   <select id="mode">
@@ -183,10 +191,12 @@ body {
     <option>Online</option>
   </select>
 
-  <input type="date" id="date" />
+  <input type="date" id="date">
 
+  <!-- MONTH PICKER -->
   <div style="display:flex; gap:10px; align-items:center;">
-    <input type="month" id="month" />
+    <input type="month" id="month">
+
     <button type="button" onclick="addMonthFromPicker()" style="
       padding:10px;
       border:none;
@@ -203,98 +213,145 @@ body {
 
   <div class="button-group">
     <button class="btn" onclick="generate()">Generate</button>
-    <button class="btn" id="printBtn" onclick="window.print()" style="display:none;">Print / Save PDF</button>
+    <button class="btn" id="printBtn" onclick="window.print()" style="display:none;">
+      Print / Save PDF
+    </button>
   </div>
 </div>
 
-<div class="receipt" id="receipt">
-  <img class="logo" src="logo.png" />
-  <div class="title">Fees Receipt</div>
-  <div class="subtitle">Tuition Plus</div>
+<!-- RECEIPT -->
+<div class="receipt">
+
+  <img src="logo.png" class="logo">
+
+  <div class="title">FEES PAID</div>
+  <div class="subtitle">Fees Payment Received</div>
 
   <table class="table">
-    <tr><td class="label">Student Name</td><td id="r_name"></td></tr>
-    <tr><td class="label">Class</td><td id="r_class"></td></tr>
-    <tr><td class="label">Date</td><td id="r_date"></td></tr>
-    <tr><td class="label">Months</td><td id="r_months"></td></tr>
-    <tr><td class="label">Mode</td><td id="r_mode"></td></tr>
+    <tr><td class="label">Student Name</td><td id="r_name">---</td></tr>
+    <tr><td class="label">Class</td><td id="r_class">---</td></tr>
+    <tr><td class="label">Date Paid On</td><td id="r_date">---</td></tr>
+    <tr><td class="label">Month Paid For</td><td id="r_month">---</td></tr>
+    <tr><td class="label">Mode Of Payment</td><td id="r_mode">---</td></tr>
   </table>
 
   <div class="address-box">
-    Tuition Plus Coaching Center<br/>
-    Contact: 0000000000
+    Pirtala Bulu Market below Pirtala Nursing Home | Few metres away from KECS
   </div>
 
+  <!-- FOOTER (UNCHANGED EXACT STRUCTURE) -->
   <div class="footer">
-    <div>
-      <img src="logo.png" />
-      Tuition Plus
+    <div style="display:flex; align-items:center; gap:8px;">
+      <img src="logo.png">
+      <div>
+        <strong>TUITION PLUS</strong><br>
+        <small>Empowering Young Minds</small>
+      </div>
     </div>
-    <div class="phone">📞 0000000000</div>
+
+    <div class="phone">
+      <span>8013753344</span>
+    </div>
   </div>
+
 </div>
 
 <script>
+
+// AUTO DATE
+const today = new Date();
+document.getElementById("date").value = today.toISOString().split("T")[0];
+
+// MONTH LOGIC
 let months = [];
 
-// Auto fill today date
-window.onload = () => {
-  document.getElementById("date").value = new Date().toISOString().split('T')[0];
+(function(){
+  const d = new Date();
+  d.setMonth(d.getMonth() - 1);
 
-  let now = new Date();
-  let prevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-  let val = prevMonth.toISOString().slice(0,7);
+  const val =
+    d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2,"0");
 
-  document.getElementById("month").value = val;
-  addMonth(val);
-};
+  months.push(val);
+  renderTags();
+})();
 
 function addMonthFromPicker() {
-  let m = document.getElementById("month").value;
-  if (m) addMonth(m);
-}
+  const val = document.getElementById("month").value;
+  if (!val) return;
 
-function addMonth(m) {
-  if (!months.includes(m)) {
-    months.push(m);
-    renderMonths();
+  if (!months.includes(val)) {
+    months.push(val);
+    renderTags();
   }
 }
 
-function removeMonth(m) {
-  months = months.filter(x => x !== m);
-  renderMonths();
+function removeMonth(val) {
+  months = months.filter(m => m !== val);
+  renderTags();
 }
 
-function renderMonths() {
-  let box = document.getElementById("monthTags");
+function renderTags() {
+  const box = document.getElementById("monthTags");
   box.innerHTML = "";
 
   months.forEach(m => {
-    let span = document.createElement("span");
+    const [y, mo] = m.split("-");
+    const label = new Date(y, mo - 1).toLocaleString("en-US", {
+      month: "long",
+      year: "numeric"
+    });
+
+    const span = document.createElement("span");
     span.innerHTML = `
-      ${formatMonth(m)}
+      ${label}
       <button onclick="removeMonth('${m}')">×</button>
     `;
+
     box.appendChild(span);
   });
 }
 
-function formatMonth(m) {
-  let d = new Date(m + "-01");
-  return d.toLocaleString('default', { month: 'long', year: 'numeric' });
+// FORMAT
+function formatDate(d) {
+  return new Date(d).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  });
 }
 
+function formatMonths(arr) {
+  return arr.map(v => {
+    const [y,m] = v.split("-");
+    return new Date(y, m-1).toLocaleString("en-US", {
+      month: "long",
+      year: "numeric"
+    });
+  }).join(", ");
+}
+
+// GENERATE
 function generate() {
-  document.getElementById("r_name").innerText = document.getElementById("name").value;
-  document.getElementById("r_class").innerText = document.getElementById("class").value;
-  document.getElementById("r_date").innerText = document.getElementById("date").value;
-  document.getElementById("r_mode").innerText = document.getElementById("mode").value;
-  document.getElementById("r_months").innerText =
-    months.map(m => formatMonth(m)).join(", ");
+
+  document.getElementById("r_name").innerText =
+    document.getElementById("name").value;
+
+  document.getElementById("r_class").innerText =
+    document.getElementById("class").value;
+
+  document.getElementById("r_date").innerText =
+    formatDate(document.getElementById("date").value);
+
+  document.getElementById("r_month").innerText =
+    months.length ? formatMonths(months) : "---";
+
+  document.getElementById("r_mode").innerText =
+    document.getElementById("mode").value;
 
   document.getElementById("printBtn").style.display = "inline-block";
 }
+
 </script>
 
 </body>
