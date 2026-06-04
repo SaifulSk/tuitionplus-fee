@@ -13,7 +13,6 @@ body {
   padding: 15px;
 }
 
-/* PRINT FIX */
 @media print {
   body {
     -webkit-print-color-adjust: exact;
@@ -24,7 +23,6 @@ body {
   }
 }
 
-/* FORM */
 .form {
   max-width: 800px;
   margin: auto;
@@ -34,7 +32,6 @@ body {
   margin-bottom: 20px;
 }
 
-/* INPUTS */
 .form input, .form select {
   padding: 10px;
   margin: 8px 0;
@@ -42,14 +39,12 @@ body {
   box-sizing: border-box;
 }
 
-/* BUTTON GROUP */
 .button-group {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
 }
 
-/* BUTTON */
 .btn {
   padding: 10px 15px;
   background: #C1121F;
@@ -60,7 +55,6 @@ body {
   margin-top: 10px;
 }
 
-/* RECEIPT */
 .receipt {
   max-width: 700px;
   margin: auto;
@@ -70,14 +64,12 @@ body {
   box-shadow: 0 5px 20px rgba(0,0,0,0.1);
 }
 
-/* LOGO */
 .logo {
   width: 150px;
   display: block;
   margin: auto;
 }
 
-/* TITLE */
 .title {
   text-align: center;
   font-size: 28px;
@@ -91,7 +83,6 @@ body {
   margin-bottom: 20px;
 }
 
-/* TABLE */
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -109,7 +100,6 @@ body {
   width: 40%;
 }
 
-/* ADDRESS */
 .address-box {
   margin-top: 15px;
   padding: 12px;
@@ -119,7 +109,6 @@ body {
   font-size: 14px;
 }
 
-/* FOOTER */
 .footer {
   margin-top: 20px;
   background: #1E3A5F;
@@ -127,12 +116,7 @@ body {
   padding: 12px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
   flex-wrap: wrap;
-}
-
-.footer img {
-  width: 35px;
 }
 
 .phone {
@@ -142,10 +126,25 @@ body {
   font-size: 14px;
 }
 
-@media(max-width:600px){
-  .phone {
-    margin-top: 15px;
-  }
+/* MONTH TAGS */
+#monthTags span {
+  display: inline-flex;
+  align-items: center;
+  background: #1E3A5F;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 20px;
+  margin: 3px;
+  font-size: 13px;
+}
+
+#monthTags button {
+  margin-left: 8px;
+  border: none;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
 }
 </style>
 </head>
@@ -170,13 +169,38 @@ body {
     <option>12</option>
   </select>
 
+  <!-- MODE OF PAYMENT (RESTORED) -->
+  <select id="mode">
+    <option value="">Payment Mode</option>
+    <option>Cash</option>
+    <option>PhonePe</option>
+    <option>Google Pay</option>
+    <option>Paytm</option>
+    <option>Online</option>
+  </select>
+
   <input type="date" id="date">
 
-  <!-- MONTH PICKER -->
-  <input type="month" id="month">
+  <!-- MONTH PICKER + ICON -->
+  <div style="display:flex; gap:10px; align-items:center;">
+    <input type="month" id="month">
+
+    <button type="button" onclick="addMonthFromPicker()" style="
+      padding:10px;
+      border:none;
+      background:#1E3A5F;
+      color:white;
+      border-radius:5px;
+      cursor:pointer;
+      font-size:18px;
+      width:45px;
+    ">＋</button>
+  </div>
+
+  <!-- MONTH TAGS -->
+  <div id="monthTags" style="margin-top:8px;"></div>
 
   <div class="button-group">
-    <button class="btn" onclick="addMonth()">Add Month</button>
     <button class="btn" onclick="generate()">Generate</button>
     <button class="btn" id="printBtn" onclick="window.print()" style="display:none;">
       Print / Save PDF
@@ -193,26 +217,11 @@ body {
   <div class="subtitle">Fees Payment Received</div>
 
   <table class="table">
-    <tr>
-      <td class="label">Student Name</td>
-      <td id="r_name">---</td>
-    </tr>
-    <tr>
-      <td class="label">Class</td>
-      <td id="r_class">---</td>
-    </tr>
-    <tr>
-      <td class="label">Date Paid On</td>
-      <td id="r_date">---</td>
-    </tr>
-    <tr>
-      <td class="label">Month Paid For</td>
-      <td id="r_month">---</td>
-    </tr>
-    <tr>
-      <td class="label">Mode Of Payment</td>
-      <td id="r_mode">---</td>
-    </tr>
+    <tr><td class="label">Student Name</td><td id="r_name">---</td></tr>
+    <tr><td class="label">Class</td><td id="r_class">---</td></tr>
+    <tr><td class="label">Date Paid On</td><td id="r_date">---</td></tr>
+    <tr><td class="label">Month Paid For</td><td id="r_month">---</td></tr>
+    <tr><td class="label">Mode Of Payment</td><td id="r_mode">---</td></tr>
   </table>
 
   <div class="address-box">
@@ -236,71 +245,69 @@ body {
 </div>
 
 <script>
-// ======================
+
 // AUTO DATE
-// ======================
 const today = new Date();
 document.getElementById("date").value = today.toISOString().split("T")[0];
 
 // ======================
-// STUDENT STORAGE
-// ======================
-const STORAGE_KEY = "students";
-
-function loadStudents() {
-  const list = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-  let dl = document.getElementById("studentList");
-
-  if (!dl) {
-    dl = document.createElement("datalist");
-    dl.id = "studentList";
-    document.body.appendChild(dl);
-    document.getElementById("name").setAttribute("list", "studentList");
-  }
-
-  dl.innerHTML = "";
-  list.forEach(name => {
-    const opt = document.createElement("option");
-    opt.value = name;
-    dl.appendChild(opt);
-  });
-}
-
-function saveStudent(name) {
-  if (!name.trim()) return;
-
-  let list = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-  list = list.filter(n => n.toLowerCase() !== name.toLowerCase());
-  list.unshift(name);
-
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(list.slice(0, 20)));
-  loadStudents();
-}
-
-loadStudents();
-
-// ======================
-// MULTI MONTH LOGIC
+// MONTH LOGIC
 // ======================
 let months = [];
 
-// preload previous month
+// AUTO PREVIOUS MONTH FIXED
 (function(){
   const d = new Date();
   d.setMonth(d.getMonth() - 1);
-  months.push(d.toISOString().slice(0,7));
+
+  const val =
+    d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2,"0");
+
+  months.push(val);
+  renderTags();
 })();
 
-function addMonth() {
+// ADD MONTH
+function addMonthFromPicker() {
   const val = document.getElementById("month").value;
-  if (val && !months.includes(val)) {
+
+  if (!val) return;
+
+  if (!months.includes(val)) {
     months.push(val);
+    renderTags();
   }
 }
 
-// ======================
-// FORMATTERS
-// ======================
+// REMOVE MONTH
+function removeMonth(val) {
+  months = months.filter(m => m !== val);
+  renderTags();
+}
+
+// RENDER TAGS
+function renderTags() {
+  const box = document.getElementById("monthTags");
+  box.innerHTML = "";
+
+  months.forEach(m => {
+    const [y, mo] = m.split("-");
+    const label = new Date(y, mo - 1).toLocaleString("en-US", {
+      month: "long",
+      year: "numeric"
+    });
+
+    const span = document.createElement("span");
+    span.innerHTML = `
+      ${label}
+      <button onclick="removeMonth('${m}')">×</button>
+    `;
+
+    box.appendChild(span);
+  });
+}
+
+// FORMAT DATE
 function formatDate(d) {
   return new Date(d).toLocaleDateString("en-GB", {
     day: "numeric",
@@ -309,36 +316,32 @@ function formatDate(d) {
   });
 }
 
+// FORMAT MONTHS
 function formatMonths(arr) {
   return arr.map(v => {
     const [y,m] = v.split("-");
     return new Date(y, m-1).toLocaleString("en-US", {
-      month:"long",
-      year:"numeric"
+      month: "long",
+      year: "numeric"
     });
   }).join(", ");
 }
 
-// ======================
-// GENERATE RECEIPT
-// ======================
+// GENERATE
 function generate() {
-  const name = document.getElementById("name").value;
 
-  saveStudent(name);
-
-  document.getElementById("r_name").innerText = name;
+  document.getElementById("r_name").innerText = document.getElementById("name").value;
   document.getElementById("r_class").innerText = document.getElementById("class").value;
   document.getElementById("r_date").innerText = formatDate(document.getElementById("date").value);
 
   document.getElementById("r_month").innerText =
     months.length ? formatMonths(months) : "---";
 
-  document.getElementById("r_mode").innerText =
-    document.getElementById("mode").value;
+  document.getElementById("r_mode").innerText = document.getElementById("mode").value;
 
   document.getElementById("printBtn").style.display = "inline-block";
 }
+
 </script>
 
 </body>
