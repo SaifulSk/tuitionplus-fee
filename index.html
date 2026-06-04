@@ -155,7 +155,8 @@ body {
 <div class="form">
   <h3>Enter Details</h3>
 
-  <input type="text" id="name" placeholder="Student Name">
+  <!-- ✅ CLEAN INPUT (NO DATALIST, NO JS INTERFERENCE) -->
+  <input type="text" id="name" placeholder="Student Name" autocomplete="off">
 
   <select id="class">
     <option value="">Select Class</option>
@@ -169,7 +170,6 @@ body {
     <option>12</option>
   </select>
 
-  <!-- MODE OF PAYMENT (RESTORED) -->
   <select id="mode">
     <option value="">Payment Mode</option>
     <option>Cash</option>
@@ -181,7 +181,7 @@ body {
 
   <input type="date" id="date">
 
-  <!-- MONTH PICKER + ICON -->
+  <!-- MONTH PICKER -->
   <div style="display:flex; gap:10px; align-items:center;">
     <input type="month" id="month">
 
@@ -197,7 +197,6 @@ body {
     ">＋</button>
   </div>
 
-  <!-- MONTH TAGS -->
   <div id="monthTags" style="margin-top:8px;"></div>
 
   <div class="button-group">
@@ -250,12 +249,10 @@ body {
 const today = new Date();
 document.getElementById("date").value = today.toISOString().split("T")[0];
 
-// ======================
 // MONTH LOGIC
-// ======================
 let months = [];
 
-// AUTO PREVIOUS MONTH FIXED
+// previous month fix
 (function(){
   const d = new Date();
   d.setMonth(d.getMonth() - 1);
@@ -267,7 +264,6 @@ let months = [];
   renderTags();
 })();
 
-// ADD MONTH
 function addMonthFromPicker() {
   const val = document.getElementById("month").value;
 
@@ -279,13 +275,11 @@ function addMonthFromPicker() {
   }
 }
 
-// REMOVE MONTH
 function removeMonth(val) {
   months = months.filter(m => m !== val);
   renderTags();
 }
 
-// RENDER TAGS
 function renderTags() {
   const box = document.getElementById("monthTags");
   box.innerHTML = "";
@@ -307,7 +301,7 @@ function renderTags() {
   });
 }
 
-// FORMAT DATE
+// FORMATTERS
 function formatDate(d) {
   return new Date(d).toLocaleDateString("en-GB", {
     day: "numeric",
@@ -316,7 +310,6 @@ function formatDate(d) {
   });
 }
 
-// FORMAT MONTHS
 function formatMonths(arr) {
   return arr.map(v => {
     const [y,m] = v.split("-");
@@ -330,14 +323,20 @@ function formatMonths(arr) {
 // GENERATE
 function generate() {
 
-  document.getElementById("r_name").innerText = document.getElementById("name").value;
-  document.getElementById("r_class").innerText = document.getElementById("class").value;
-  document.getElementById("r_date").innerText = formatDate(document.getElementById("date").value);
+  document.getElementById("r_name").innerText =
+    document.getElementById("name").value;
+
+  document.getElementById("r_class").innerText =
+    document.getElementById("class").value;
+
+  document.getElementById("r_date").innerText =
+    formatDate(document.getElementById("date").value);
 
   document.getElementById("r_month").innerText =
     months.length ? formatMonths(months) : "---";
 
-  document.getElementById("r_mode").innerText = document.getElementById("mode").value;
+  document.getElementById("r_mode").innerText =
+    document.getElementById("mode").value;
 
   document.getElementById("printBtn").style.display = "inline-block";
 }
